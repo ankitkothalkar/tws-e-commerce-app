@@ -3,7 +3,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.15.1"
 
-  cluster_name                   = local.name
+  cluster_name               = local.name
   cluster_endpoint_public_access = true
 
   cluster_addons = {
@@ -18,9 +18,9 @@ module "eks" {
     }
   }
 
-  vpc_id                   = module.vpc.vpc_id
-  subnet_ids               = module.vpc.public_subnets
-  control_plane_subnet_ids = module.vpc.intra_subnets
+  vpc_id                     = module.vpc.vpc_id
+  subnet_ids                 = module.vpc.public_subnets
+  control_plane_subnet_ids   = module.vpc.intra_subnets
 
   # EKS Managed Node Group(s)
 
@@ -36,14 +36,14 @@ module "eks" {
   eks_managed_node_groups = {
 
     tws-demo-ng = {
-      min_size     = 2
-      max_size     = 3
-      desired_size = 2
+      min_size       = 2
+      max_size       = 3
+      desired_size   = 2
 
       instance_types = ["t2.large"]
       capacity_type  = "SPOT"
 
-      disk_size = 35 
+      disk_size = 35  
       use_custom_launch_template = false  # Important to apply disk size!
 
       tags = {
@@ -53,11 +53,23 @@ module "eks" {
       }
     }
   }
- 
+  
   tags = local.tags
 
-
 }
+
+# This new resource adds an inbound rule to the EKS node security group
+# to allow HTTP (port 80) traffic from anywhere on the internet.
+resource "aws_security_group_rule" "allow_http_from_internet" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = module.eks.node_security_group_id
+  description       = "Allow HTTP traffic from the internet"
+}
+
 
 data "aws_instances" "eks_nodes" {
   instance_tags = {
@@ -65,8 +77,8 @@ data "aws_instances" "eks_nodes" {
   }
 
   filter {
-    name   = "instance-state-name"
-    values = ["running"]
+    name    = "instance-state-name"
+    values  = ["running"]
   }
 
   depends_on = [module.eks]
