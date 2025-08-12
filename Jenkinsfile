@@ -4,10 +4,12 @@ pipeline {
     agent any
     
     environment {
-        // Update the main app image name to match the deployment file
-        DOCKER_IMAGE_NAME = 'trainwithshubham/easyshop-app'
-        DOCKER_MIGRATION_IMAGE_NAME = 'trainwithshubham/easyshop-migration'
+        // Updated to use your Docker Hub username
+        DOCKER_IMAGE_NAME = 'ankitkothalkar/easyshop-app'
+        DOCKER_MIGRATION_IMAGE_NAME = 'ankitkothalkar/easyshop-migration'
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
+        // Using a single variable for Docker credentials
+        DOCKER_CREDENTIALS = 'docker-hub-credentials'
         GITHUB_CREDENTIALS = credentials('github-credentials')
         GIT_BRANCH = "master"
     }
@@ -24,7 +26,8 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 script {
-                    clone("https://github.com/LondheShubham153/tws-e-commerce-app.git","master")
+                    // Update this URL if your repository is different
+                    clone("https://github.com/ankitkothalkar/tws-e-commerce-app.git","master")
                 }
             }
         }
@@ -70,10 +73,7 @@ pipeline {
         stage('Security Scan with Trivy') {
             steps {
                 script {
-                    // Create directory for results
-                  
                     trivy_scan()
-                    
                 }
             }
         }
@@ -86,7 +86,7 @@ pipeline {
                             docker_push(
                                 imageName: env.DOCKER_IMAGE_NAME,
                                 imageTag: env.DOCKER_IMAGE_TAG,
-                                credentials: 'docker-hub-credentials'
+                                credentials: env.DOCKER_CREDENTIALS
                             )
                         }
                     }
@@ -98,7 +98,7 @@ pipeline {
                             docker_push(
                                 imageName: env.DOCKER_MIGRATION_IMAGE_NAME,
                                 imageTag: env.DOCKER_IMAGE_TAG,
-                                credentials: 'docker-hub-credentials'
+                                credentials: env.DOCKER_CREDENTIALS
                             )
                         }
                     }
@@ -106,16 +106,15 @@ pipeline {
             }
         }
         
-        // Add this new stage
         stage('Update Kubernetes Manifests') {
             steps {
                 script {
                     update_k8s_manifests(
                         imageTag: env.DOCKER_IMAGE_TAG,
                         manifestsPath: 'kubernetes',
-                        gitCredentials: 'github-credentials',
+                        gitCredentials: env.GITHUB_CREDENTIALS,
                         gitUserName: 'Jenkins CI',
-                        gitUserEmail: 'shubhamnath5@gmail.com'
+                        gitUserEmail: 'reportankitk@gmail.com'
                     )
                 }
             }
