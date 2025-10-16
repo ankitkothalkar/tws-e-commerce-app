@@ -21,7 +21,7 @@ spec:
       # ----------------------------------------
       containers:
         - name: easyshop
-          image: ankitkothalkar/easyshop-app:1 # <--- यहाँ बदलाव किया गया है
+          image: ankitkothalkar/easyshop-app:10 # <--- यहाँ बदलाव किया गया है
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

@@ -13,7 +13,7 @@ spec:
       # ----------------------------------------
       containers:
         - name: db-migration
-          image: ankitkothalkar/easyshop-migration:1 # <--- यहाँ बदलाव किया गया है
+          image: ankitkothalkar/easyshop-migration:10 # <--- यहाँ बदलाव किया गया है
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
