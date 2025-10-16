@@ -1,16 +1,22 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: db-migration
+  name: easyshop-migration
   namespace: easyshop
 spec:
   template:
     spec:
-      containers:
-      - name: migration
-        image: ankitkothalkar/easyshop-migration:1  # <--- यहाँ बदलाव किया गया है
-        imagePullPolicy: Always
-        env:
-        - name: MONGODB_URI
-          value: "mongodb://mongodb-service:27017/easyshop"
       restartPolicy: OnFailure
+      # --- FIX: Docker Pull Secret Joda Gaya Hai ---
+      imagePullSecrets:
+      - name: docker-pull-secret
+      # ----------------------------------------
+      containers:
+        - name: db-migration
+          image: ankitkothalkar/easyshop-migration:1 # <--- यहाँ बदलाव किया गया है
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: easyshop-config
+            - secretRef:
+                name: easyshop-secrets

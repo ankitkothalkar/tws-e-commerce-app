@@ -1,5 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: easyshop
   namespace: easyshop
@@ -13,6 +15,10 @@ spec:
       labels:
         app: easyshop
     spec:
+      # --- FIX: Docker Pull Secret Joda Gaya Hai ---
+      imagePullSecrets:
+      - name: docker-pull-secret
+      # ----------------------------------------
       containers:
         - name: easyshop
           image: ankitkothalkar/easyshop-app:1 # <--- यहाँ बदलाव किया गया है
