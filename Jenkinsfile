@@ -10,7 +10,10 @@ pipeline {
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         // Using a single variable for Docker credentials
         DOCKER_CREDENTIALS = 'docker-hub-credentials'
-        GITHUB_CREDENTIALS = credentials('github-credentials')
+        
+        // --- FIX: Credentials function removed, passing only ID as string ---
+        GITHUB_CREDENTIALS = 'github-credentials' 
+        
         GIT_BRANCH = "master"
     }
     
@@ -112,10 +115,22 @@ pipeline {
                     update_k8s_manifests(
                         imageTag: env.DOCKER_IMAGE_TAG,
                         manifestsPath: 'kubernetes',
-                        gitCredentials: env.GITHUB_CREDENTIALS,
+                        // Use the fixed GITHUB_CREDENTIALS string ID
+                        gitCredentials: env.GITHUB_CREDENTIALS, 
                         gitUserName: 'Jenkins CI',
                         gitUserEmail: 'reportankitk@gmail.com'
                     )
+                }
+            }
+        }
+        
+        // --- NEW STAGE: Deployment to EKS ---
+        stage('Deployment to EKS') {
+            steps {
+                script {
+                    // Apply all YAML files in the kubernetes directory
+                    sh "kubectl apply -f kubernetes/"
+                    echo "Application deployed to EKS cluster successfully."
                 }
             }
         }
