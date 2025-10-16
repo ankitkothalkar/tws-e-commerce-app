@@ -18,7 +18,7 @@ spec:
         path: /
         backend:
           service:
-            name: easyshop
+            name: easyshop-service
             port:
               number: 3000
   tls:
