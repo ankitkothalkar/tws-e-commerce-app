@@ -11,7 +11,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-  - host: seocompany.digital
+  - host: easyshop.seocompany.digital
     http:
       paths:
       - pathType: Prefix
