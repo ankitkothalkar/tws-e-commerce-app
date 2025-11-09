@@ -22,6 +22,6 @@ spec:
             port:
               number: 3000
   tls:
-  - hosts:
-    -easyshop.seocompany.digital
-    secretName: letsencrypt-tls
+  - hosts:
+    -easyshop.seocompany.digital  # <-- यह आपकी Line 27 है (संभावित रूप से)
+    secretName: letsencrypt-tls
