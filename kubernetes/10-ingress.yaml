@@ -22,6 +22,6 @@ spec:
             port:
               number: 3000
   tls:
-  - hosts:
-    - easyshop.seocompany.digital  
-    secretName: letsencrypt-tls
+  - hosts:
+    - seocompany.digital
+    secretName: letsencrypt-tls
